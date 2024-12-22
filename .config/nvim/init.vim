@@ -36,7 +36,7 @@ Plug 'scrooloose/nerdcommenter'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
   " supported extensions: https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions#implemented-coc-extensions
-  let g:coc_global_extensions= ['coc-clangd', 'coc-go', 'coc-sh', 'coc-rust-analyzer']
+  let g:coc_global_extensions= ['coc-clangd', 'coc-go', 'coc-sh', 'coc-pyright', 'coc-rust-analyzer']
 
   autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
   inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "\<Tab>" : coc#refresh()
