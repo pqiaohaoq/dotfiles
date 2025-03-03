@@ -1,4 +1,15 @@
 {
+  "git.addGBlameToVirtualText": true,
   "semanticTokens.enable": true,
-  "coc.preferences.formatOnSaveFiletypes": ["cpp", "c", "go"]
+  "coc.preferences.formatOnSaveFiletypes": ["cpp", "c", "go"],
+  "languageserver": {
+    "go": {
+      "command": "gopls",
+      "rootPatterns": ["go.work", "go.mod", ".git/"],
+      "fileTypes": ["go"],
+      "initializationOptions": {
+        "usePlaceholders": true
+      }
+    }
+  }
 }

@@ -36,7 +36,14 @@ Plug 'scrooloose/nerdcommenter'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
   " supported extensions: https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions#implemented-coc-extensions
-  let g:coc_global_extensions= ['coc-clangd', 'coc-go', 'coc-sh', 'coc-pyright', 'coc-rust-analyzer']
+  let g:coc_global_extensions= ['coc-clangd', 'coc-go', 'coc-sh', 'coc-pyright', 'coc-rust-analyzer', 'coc-git']
+
+  nmap [g <Plug>(coc-git-prevchunk)
+  nmap ]g <Plug>(coc-git-nextchunk)
+  nmap [c <Plug>(coc-git-prevconflict)
+  nmap ]c <Plug>(coc-git-nextconflict)
+  nmap gs <Plug>(coc-git-chunkinfo)
+  nmap gc <Plug>(coc-git-commit)
 
   autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
   inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "\<Tab>" : coc#refresh()
@@ -63,6 +70,9 @@ Plug 'dense-analysis/ale'
   let g:ale_echo_msg_warning_str = 'W'
   let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
   let g:ale_lint_on_enter = 1
+  let g:ale_hints = {
+      \ 'go': ['gopls'],
+      \}
 
   nmap sp <Plug>(ale_previous_wrap)
   nmap sn <Plug>(ale_next_wrap)
