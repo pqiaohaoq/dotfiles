@@ -1,0 +1,8 @@
+icons:
+  when: never
+
+sorting:
+  dir-grouping: first
+
+date: '+%Y-%m-%d %H:%M'
+size: short
