@@ -107,6 +107,7 @@ set nobackup
 set nowritebackup
 set updatetime=300
 set signcolumn=yes
+set ignorecase
 
 autocmd BufWrite,BufRead *.go,*.c,*.cpp,Makefile setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
 autocmd BufWrite,BufRead *.yml,*.yaml,*.json setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
