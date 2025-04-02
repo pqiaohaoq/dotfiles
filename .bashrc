@@ -36,6 +36,9 @@ export GO11MODULE=on
 export GOPATH=${HOME}/.go
 export GOPROXY=https://goproxy.cn,direct
 
+export RUSTUP_UPDATE_ROOT=https://mirrors.aliyun.com/rustup/rustup
+export RUSTUP_DIST_SERVER=https://mirrors.aliyun.com/rustup
+
 export FZF_DEFAULT_OPTS="--height=20% --reverse"
 export FZF_DEFAULT_COMMAND="fd --type f --strip-cwd-prefix --exclude={.git,build,thirdparty,vendor}"
 
