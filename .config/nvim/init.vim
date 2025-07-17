@@ -8,14 +8,6 @@ endif
 let mapleader=' '
 
 call plug#begin()
-Plug 'scrooloose/nerdtree'
-  let NERDTreeMinimalUI = 1
-  let NERDTreeDirArrows = 1
-  let g:NERDTreeDirArrowExpandable = '+'
-  let g:NERDTreeDirArrowCollapsible = '-'
-
-  nnoremap <c-n> :NERDTreeToggle<CR>
-
 Plug 'scrooloose/nerdcommenter'
   let g:NERDCreateDefaultMappings = 0
   let g:NERDSpaceDelims = 1
@@ -36,7 +28,7 @@ Plug 'scrooloose/nerdcommenter'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
   " supported extensions: https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions#implemented-coc-extensions
-  let g:coc_global_extensions= ['coc-clangd', 'coc-go', 'coc-sh', 'coc-pyright', 'coc-rust-analyzer', 'coc-git']
+  let g:coc_global_extensions= ['coc-clangd', 'coc-go', 'coc-sh', 'coc-pyright', 'coc-rust-analyzer', 'coc-git', 'coc-explorer']
 
   nmap [g <Plug>(coc-git-prevchunk)
   nmap ]g <Plug>(coc-git-nextchunk)
@@ -54,6 +46,8 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
   nmap <leader>rn <Plug>(coc-rename)
+
+  nmap <leader>e <Cmd>CocCommand explorer<CR>
 
   command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
   command! -nargs=? Fold :call     CocAction('fold', <f-args>)
@@ -110,7 +104,7 @@ set signcolumn=yes
 set ignorecase
 
 autocmd BufWrite,BufRead *.go,*.c,*.cpp,Makefile setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
-autocmd BufWrite,BufRead *.yml,*.yaml,*.json setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
+autocmd BufWrite,BufRead *.yml,*.yaml,*.json, setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
 
 nnoremap H <C-w>h
 nnoremap J <C-w>j
