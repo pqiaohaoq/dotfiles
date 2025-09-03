@@ -42,6 +42,10 @@ export RUSTUP_DIST_SERVER=https://mirrors.aliyun.com/rustup
 export FZF_DEFAULT_OPTS="--height=20% --reverse"
 export FZF_DEFAULT_COMMAND="fd --type f --strip-cwd-prefix --exclude={.git,build,thirdparty,vendor}"
 
+export DOCKER_BUILDKIT=1
+export COMPOSE_BAKE=true
+export BUILDX_EXPERIMENTAL=1
+
 function add_path() {
     export PATH=${PATH}:$1
 }
@@ -73,3 +77,9 @@ if [[ $(uname -o) == "Darwin" ]]; then
     export PATH="/usr/local/opt/openjdk/bin:$PATH"
     export CPPFLAGS="-I/usr/local/opt/openjdk/include"
 fi
+
+fe() {
+  IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0 --preview="bat --color=always {}"))
+  [[ -n "$files" ]] && ${EDITOR:-nvim} "${files[@]}"
+}
+
