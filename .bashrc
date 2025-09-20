@@ -27,17 +27,9 @@ export HOMEBREW_EDITOR=${EDITOR}
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_INSTALL_FROM_API=1
-export HOMEBREW_API_DOMAIN="https://mirrors.aliyun.com/homebrew-bottles/api"
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.aliyun.com/homebrew/brew.git"
-export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.aliyun.com/homebrew/homebrew-core.git"
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.aliyun.com/homebrew/homebrew-bottles"
 
 export GO11MODULE=on
 export GOPATH=${HOME}/.go
-export GOPROXY=https://goproxy.cn,direct
-
-export RUSTUP_UPDATE_ROOT=https://mirrors.aliyun.com/rustup/rustup
-export RUSTUP_DIST_SERVER=https://mirrors.aliyun.com/rustup
 
 export FZF_DEFAULT_OPTS="--height=20% --reverse"
 export FZF_DEFAULT_COMMAND="fd --type f --strip-cwd-prefix --exclude={.git,build,thirdparty,vendor}"
