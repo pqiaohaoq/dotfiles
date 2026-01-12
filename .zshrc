@@ -7,6 +7,18 @@ setopt NO_BEEP
 setopt PROMPT_SUBST
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
+setopt EXTENDED_HISTORY
+
+
+function fh() {
+    local selected
+    selected=$(fc -li 1 | sed -E 's/^[[:space:]]*[0-9]+\*?[[:space:]]+//' | fzf +s --tac --height "50%" | sed -E 's/^[^ ]* [^ ]* [[:space:]]*//') || return
+    BUFFER="$selected"
+    CURSOR=${#BUFFER}
+    zle reset-prompt
+}
+zle -N fh
+bindkey '^R' fh
 
 
 function git_branch() { git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /' }
