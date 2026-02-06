@@ -317,7 +317,28 @@ require("lazy").setup({
       })
       vim.keymap.set("n", "]g", function() require("gitsigns").next_hunk() end)
       vim.keymap.set("n", "[g", function() require("gitsigns").prev_hunk() end)
-      vim.keymap.set("n", "<Space>gsq", "<cmd>Gitsigns setqflist<cr>")
+      vim.keymap.set("n", "<Leader>gt", "<cmd>Gitsigns setqflist<cr>")
+      vim.keymap.set("n", "<Leader>gd", "<cmd>Gitsigns diffthis<cr>")
+    end,
+  },
+  {
+    "easymotion/vim-easymotion",
+    config = function()
+      vim.g.EasyMotion_do_mapping = 0
+      vim.g.EasyMotion_smartcase = 1
+      vim.keymap.set("n", "s", "<Plug>(easymotion-s)")
+      vim.keymap.set("n", "<Leader><Leader>w", "<Plug>(easymotion-bd-w)")
+    end,
+  },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    dependencies = { "nvim-cmp" },
+    config = function()
+      require("nvim-autopairs").setup({})
+      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+      local cmp = require("cmp")
+      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
     end,
   },
 })
