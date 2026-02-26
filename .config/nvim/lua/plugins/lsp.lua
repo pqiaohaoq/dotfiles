@@ -3,13 +3,10 @@ return {
   config = function()
     local on_attach = function(client, bufnr)
       vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-      if client.supports_method("textDocument/formatting") then
-        vim.api.nvim_create_autocmd("BufWritePre", {
-          buffer = bufnr,
-          callback = function()
-            vim.lsp.buf.format({ timeout_ms = 2000 })
-          end,
-        })
+
+      if client.name == "pyright" then
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
       end
     end
 

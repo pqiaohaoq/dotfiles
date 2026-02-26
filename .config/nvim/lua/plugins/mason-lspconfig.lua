@@ -1,7 +1,7 @@
 return {
   "williamboman/mason-lspconfig.nvim",
   config = function()
-    local servers = { "gopls", "clangd", "bashls", "pyright", "ts_ls" }
+    local servers = { "gopls", "clangd", "bashls", "pyright", "ts_ls", "ruff" }
     local mlspconfig = require("mason-lspconfig")
     mlspconfig.setup({
       ensure_installed = servers,
