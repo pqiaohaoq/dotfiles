@@ -1,13 +1,19 @@
 return {
   "williamboman/mason-lspconfig.nvim",
   config = function()
-    require("mason-lspconfig").setup({
-      ensure_installed = { "gopls", "clangd", "bashls", "ts_ls" },
+    local servers = { "gopls", "clangd", "bashls", "pyright", "ts_ls" }
+    local mlspconfig = require("mason-lspconfig")
+    mlspconfig.setup({
+      ensure_installed = servers,
       handlers = {
         function(server_name)
           vim.lsp.enable(server_name)
         end,
       },
     })
+
+    vim.api.nvim_create_user_command("MasonInstallAll", function()
+      mlspconfig.setup({ ensure_installed = servers })
+    end, { desc = "Install all Mason LSP servers" })
   end,
 }

@@ -29,6 +29,18 @@ return {
 
     vim.lsp.config("bashls", {})
 
+    vim.lsp.config("pyright", {
+      settings = {
+        python = {
+          analysis = {
+            autoSearchPaths = true,
+            diagnosticMode = "workspace",
+            useLibraryCodeForTypes = true,
+          },
+        },
+      },
+    })
+
     vim.lsp.config("ts_ls", {
       settings = {
         javascript = {
@@ -59,6 +71,7 @@ return {
     vim.lsp.enable("gopls")
     vim.lsp.enable("clangd")
     vim.lsp.enable("bashls")
+    vim.lsp.enable("pyright")
     vim.lsp.enable("ts_ls")
 
     vim.api.nvim_create_autocmd("LspAttach", {
