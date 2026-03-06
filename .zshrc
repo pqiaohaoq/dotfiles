@@ -66,10 +66,28 @@ alias brewfile="brew bundle dump --global -f"
 
 
 function fco() {
-    local tags branches target
+    local tags branches target type ref local_branch
     branches=$(git --no-pager branch --all --format="%(if)%(HEAD)%(then)%(else)%(if:equals=HEAD)%(refname:strip=3)%(then)%(else)%1B[0;34;1mbranch%09%1B[m%(refname:short)%(end)%(end)" | sed '/^$/d') || return
     tags=$(git --no-pager tag | awk '{print "\x1b[35;1mtag\x1b[m\t" $1}') || return
     target=$((echo "${branches}"; echo "${tags}") | fzf --no-hscroll --no-multi -n 2 --ansi) || return
-    git checkout $(awk '{print $2}' <<<"$target")
+
+    type=$(awk '{print $1}' <<<"$target")
+    ref=$(awk '{print $2}' <<<"$target")
+
+    if [[ "$type" == "tag" ]]; then
+        # 标签：创建本地分支追踪标签
+        git checkout -b "$ref" "$ref"
+    elif [[ "$ref" == remotes/* ]]; then
+        # 远程分支：提取分支名并创建本地分支追踪上游
+        local_branch=$(echo "$ref" | sed 's#remotes/[^/]*/##')
+        git checkout -b "$local_branch" "$ref"
+    elif [[ "$ref" == */* ]]; then
+        # origin/xxx 格式的远程分支
+        local_branch=$(echo "$ref" | sed 's#^[^/]*/##')
+        git checkout -b "$local_branch" "$ref"
+    else
+        # 本地分支：直接切换
+        git checkout "$ref"
+    fi
 }
 
