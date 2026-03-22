@@ -2,6 +2,8 @@
 
 [[ $- != *i* ]] && return
 
+[[ -n "$TERM_PROGRAM" ]] && export TERM=xterm-256color
+
 
 setopt NO_BEEP
 setopt PROMPT_SUBST
