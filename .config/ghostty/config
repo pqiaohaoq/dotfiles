@@ -1,4 +1,18 @@
-font-size = 16
+font-family = Cascadia Code
+font-family = LXGW WenKai
+font-feature = -calt
+font-size = 18
 command = /bin/zsh
 mouse-hide-while-typing = true
 confirm-close-surface = false
+theme = nord
+background-opacity = 0.95
+background-blur-radius = 20
+window-padding-x = 10
+window-padding-y = 10
+cursor-style-blink = false
+font-thicken = true
+scrollback-limit = 10000
+term = xterm-256color
+keybind = ctrl+u=text:\x15
+keybind = ctrl+w=text:\x17
