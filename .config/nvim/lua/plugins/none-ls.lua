@@ -2,9 +2,8 @@ return {
   "nvimtools/none-ls.nvim",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    "nvimtools/none-ls-extras.nvim",
   },
-  ft = { "go", "python" },
+  ft = { "go" }, -- 仅在打开 Go 文件时加载
   config = function()
     local null_ls = require("null-ls")
     local formatting_group = vim.api.nvim_create_augroup("formatting", { clear = true })
@@ -24,31 +23,22 @@ return {
       end,
       sources = {
         null_ls.builtins.formatting.goimports.with({
-          extra_args = { "-tabwidth", "4", "-tabs" },
-        }),
-        require("none-ls.diagnostics.ruff"),
-        require("none-ls.formatting.ruff_format").with({
-          extra_args = { "--line-length=150" },
+          -- 从 go.mod 动态读取模块路径，自动区分本地包
+          extra_args = function()
+            local gomod = vim.fn.findfile("go.mod", ".;")
+            if gomod == "" then
+              return {}
+            end
+            for line in io.lines(gomod) do
+              local module = line:match("^module%s+(.+)$")
+              if module then
+                return { "-local", module }
+              end
+            end
+            return {}
+          end,
         }),
       },
-    })
-
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = "go",
-      callback = function()
-        vim.bo.expandtab = false
-        vim.bo.shiftwidth = 4
-        vim.bo.tabstop = 4
-      end,
-    })
-
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = "python",
-      callback = function()
-        vim.bo.expandtab = true
-        vim.bo.shiftwidth = 4
-        vim.bo.tabstop = 4
-      end,
     })
   end,
 }

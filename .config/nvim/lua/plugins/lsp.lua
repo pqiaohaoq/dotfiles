@@ -1,83 +1,46 @@
 return {
   "neovim/nvim-lspconfig",
   config = function()
-    local on_attach = function(client, bufnr)
-      vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-
-      if client.name == "pyright" then
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-      end
-    end
-
+    -- gopls 配置
     vim.lsp.config("gopls", {
       settings = {
         gopls = {
           analyses = {
-            unusedparams = true,
+            unusedparams = true, -- 检测未使用的参数
           },
-          staticcheck = true,
-          gofumpt = true,
-        },
-      },
-    })
-
-    vim.lsp.config("clangd", {})
-
-    vim.lsp.config("bashls", {})
-
-    vim.lsp.config("pyright", {
-      settings = {
-        python = {
-          analysis = {
-            autoSearchPaths = true,
-            diagnosticMode = "workspace",
-            useLibraryCodeForTypes = true,
-          },
-        },
-      },
-    })
-
-    vim.lsp.config("ts_ls", {
-      settings = {
-        javascript = {
-          inlayHints = {
-            includeInlayEnumMemberValueHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayVariableTypeHints = true,
-          },
-        },
-        typescript = {
-          inlayHints = {
-            includeInlayEnumMemberValueHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayVariableTypeHints = true,
-          },
+          staticcheck = true, -- 启用 staticcheck 静态分析
+          gofumpt = true, -- 使用 gofumpt 格式化
         },
       },
     })
 
     vim.lsp.enable("gopls")
-    vim.lsp.enable("clangd")
-    vim.lsp.enable("bashls")
     vim.lsp.enable("pyright")
-    vim.lsp.enable("ts_ls")
 
-    vim.api.nvim_create_autocmd("LspAttach", {
-      group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-      callback = function(ev)
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        on_attach(client, ev.buf)
+    -- ruff 作为 Python 格式化 + lint 工具
+    vim.lsp.config("ruff", {
+      init_options = {
+        settings = {
+          organizeImports = true,
+        },
+      },
+    })
+    vim.lsp.enable("ruff")
+
+    -- Python 文件保存时自动格式化
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "python",
+      callback = function(args)
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          buffer = args.buf,
+          callback = function()
+            vim.lsp.buf.format({ bufnr = args.buf })
+          end,
+        })
       end,
     })
+
+    -- 光标停留时自动显示诊断浮窗
     vim.api.nvim_create_autocmd("CursorHold", {
       callback = function()
         vim.diagnostic.open_float(nil, { focus = false })
