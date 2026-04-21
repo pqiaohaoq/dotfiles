@@ -4,7 +4,7 @@ return {
   event = { "BufReadPre", "BufNewFile" },
   config = function()
     require("nvim-treesitter").install({
-      "go", "python", "lua", "vim",
+      "go", "python", "lua", "vim", "bash",
     })
 
     vim.api.nvim_create_autocmd("FileType", {

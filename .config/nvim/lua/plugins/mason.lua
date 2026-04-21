@@ -12,7 +12,7 @@ return {
     })
 
     -- 自动安装
-    local ensure_installed = { "gopls", "goimports", "pyright", "ruff" }
+    local ensure_installed = { "gopls", "goimports", "pyright", "ruff", "bash-language-server" }
     local mr = require("mason-registry")
     local function install_packages()
       for _, pkg in ipairs(ensure_installed) do

@@ -4,6 +4,7 @@
 --   goimports:      go install golang.org/x/tools/cmd/goimports@latest
 --   pyright:        pip install pyright
 --   ruff:           pip install ruff
+--
 require("config.lazy")
 require("config.options")
 require("config.keymaps")

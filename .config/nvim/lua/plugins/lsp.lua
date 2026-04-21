@@ -27,6 +27,8 @@ return {
     })
     vim.lsp.enable("ruff")
 
+    vim.lsp.enable("bashls")
+
     -- Python 文件保存时自动格式化
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "python",
