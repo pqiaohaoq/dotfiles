@@ -63,9 +63,7 @@ add_path "${HOME}/.local/bin"
 add_path "${HOME}/.node_modules/bin"
 add_path "/usr/local/bin" # for homebrew bin
 
-
-alias brewfile="brew bundle dump --global -f"
-
+source /usr/share/nvm/init-nvm.sh
 
 function fco() {
     local tags branches target type ref local_branch
@@ -77,18 +75,14 @@ function fco() {
     ref=$(awk '{print $2}' <<<"$target")
 
     if [[ "$type" == "tag" ]]; then
-        # 标签：创建本地分支追踪标签
         git checkout -b "$ref" "$ref"
     elif [[ "$ref" == remotes/* ]]; then
-        # 远程分支：提取分支名并创建本地分支追踪上游
         local_branch=$(echo "$ref" | sed 's#remotes/[^/]*/##')
         git checkout -b "$local_branch" "$ref"
     elif [[ "$ref" == */* ]]; then
-        # origin/xxx 格式的远程分支
         local_branch=$(echo "$ref" | sed 's#^[^/]*/##')
         git checkout -b "$local_branch" "$ref"
     else
-        # 本地分支：直接切换
         git checkout "$ref"
     fi
 }

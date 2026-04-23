@@ -5,64 +5,52 @@ cd $HOME
 echo "init submodules..."
 yadm submodule update --recursive --init
 
-function install_on_common() {
-    brew bundle -v -g
-
-    npm config set prefix "${HOME}/.node_modules"
-    npm config set registry "https://registry.npmmirror.com"
-
-    if ! command -v cnpm > /dev/null 2>&1; then
-        npm install -g cnpm --registry=https://registry.npm.taobao.org
-    fi
-
-    # vim plugins managed by vim-plug
-    if command -v nvim > /dev/null 2>&1; then
-        echo "Bootstrapingn Neovim..."
-        nvim '+PlugInstall' '+PlugClean!' '+qall'
-    fi
-}
-
-
-function install_on_macOS() {
-    # install HomeBrew if it's missing.
-    if ! command -v brew > /dev/null 2>&1; then
-        echo "Installing HomeBrew..."
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    fi
-}
-
-function install_on_linux() {
-    # install Homebrew
-    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
-    test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bashrc
-}
-
-
-function install_on_ArchLinux() {
-    # Change aur mirrors
-    sudo curl -o /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=CN&country=HK&country=US&protocol=http&protocol=https&ip_version=4&ip_version=6"
-    sudo sed -i 's/#Server/Server/g' /etc/pacman.d/mirrorlist && pacman -Syyu --noconfirm
+function configure_mirrors() {
+    echo "Configuring aliyun mirrors..."
+    sudo tee /etc/pacman.d/mirrorlist > /dev/null <<'EOF'
+Server = https://mirrors.aliyun.com/archlinux/$repo/os/$arch
+EOF
     sudo sed -i 's/#Color/Color/g' /etc/pacman.conf
+    sudo pacman -Syyu --noconfirm
+}
 
+function install_yay() {
     if ! command -v yay > /dev/null 2>&1; then
-        # Installing yay
-        echo "Install Yay..."
-        rm -rf /tmp/yay && git clone --depth 1 https://aur.archlinux.org/yay.git /tmp/yay && cd /tmp/yay && makepkg -si --noconfirm
-    fi
+        sudo pacman -S git base-devel
 
+        echo "Installing yay..."
+        rm -rf /tmp/yay && git clone --depth 1 https://aur.archlinux.org/yay.git /tmp/yay && cd /tmp/yay && makepkg -si --noconfirm
+        cd $HOME
+    fi
+}
+
+function install_packages() {
     echo "Installing from .Pacmanfile..."
     yay -S --needed --noconfirm - < $HOME/.Pacmanfile
 }
 
+function setup_node() {
+    source /usr/share/nvm/init-nvm.sh
 
-case $(uname -s) in
-    "Darwin")
-        install_on_macOS;;
-    #"Linux")
-        #install_on_ArchLinux;;
-    *)
-        echo "Cannot detect the system...";;
-esac
+    echo "Installing Node.js LTS..."
+    nvm install --lts
+    nvm use --lts
 
-install_on_common
+    echo "Installing npm global dependencies..."
+    npm install -g tree-sitter-cli
+}
+
+function bootstrap_neovim() {
+    if command -v nvim > /dev/null 2>&1; then
+        echo "Bootstrapping Neovim..."
+        nvim --headless '+Lazy! sync' +qa
+        nvim --headless '+MasonToolsInstall' +qa 2>/dev/null || true
+        nvim --headless -c 'sleep 30' -c 'qa' 2>/dev/null || true
+    fi
+}
+
+configure_mirrors
+install_yay
+install_packages
+setup_node
+bootstrap_neovim
