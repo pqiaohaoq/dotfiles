@@ -5,6 +5,7 @@
 [[ -n "$TERM_PROGRAM" ]] && export TERM=xterm-256color
 
 
+bindkey -v
 setopt NO_BEEP
 setopt PROMPT_SUBST
 
