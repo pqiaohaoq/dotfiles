@@ -55,6 +55,8 @@ export DOCKER_BUILDKIT=1
 export COMPOSE_BAKE=true
 export BUILDX_EXPERIMENTAL=2
 
+export GPG_TTY=$(tty)
+
 
 function add_path() {
     export PATH=${PATH}:$1
@@ -67,24 +69,44 @@ add_path "/usr/local/bin" # for homebrew bin
 source /usr/share/nvm/init-nvm.sh
 
 function fco() {
-    local tags branches target type ref local_branch
-    branches=$(git --no-pager branch --all --format="%(if)%(HEAD)%(then)%(else)%(if:equals=HEAD)%(refname:strip=3)%(then)%(else)%1B[0;34;1mbranch%09%1B[m%(refname:short)%(end)%(end)" | sed '/^$/d') || return
-    tags=$(git --no-pager tag | awk '{print "\x1b[35;1mtag\x1b[m\t" $1}') || return
-    target=$((echo "${branches}"; echo "${tags}") | fzf --no-hscroll --no-multi -n 2 --ansi) || return
+    local branches target target_type remote_branch local_branches remote_branches tags
 
-    type=$(awk '{print $1}' <<<"$target")
-    ref=$(awk '{print $2}' <<<"$target")
+    local_branches=$(git --no-pager branch --format="%(refname:short)")
+    remote_branches=$(git --no-pager branch -r --format="%(refname:short)" | sed 's#^[^/]*/##')
+    tags=$(git --no-pager tag --format="%(refname:short)")
 
-    if [[ "$type" == "tag" ]]; then
-        git checkout -b "$ref" "$ref"
-    elif [[ "$ref" == remotes/* ]]; then
-        local_branch=$(echo "$ref" | sed 's#remotes/[^/]*/##')
-        git checkout -b "$local_branch" "$ref"
-    elif [[ "$ref" == */* ]]; then
-        local_branch=$(echo "$ref" | sed 's#^[^/]*/##')
-        git checkout -b "$local_branch" "$ref"
-    else
-        git checkout "$ref"
-    fi
+    branches=$(
+        {
+        comm -12 <(echo "$local_branches" | sort) <(echo "$remote_branches" | sort) 2>/dev/null | awk '{printf "branch\t\033[32m both \033[m\t%s\n", $0}'
+        comm -23 <(echo "$local_branches" | sort) <(echo "$remote_branches" | sort) 2>/dev/null | awk '{printf "branch\t\033[36m local\033[m\t%s\n", $0}'
+        comm -13 <(echo "$local_branches" | sort) <(echo "$remote_branches" | sort) 2>/dev/null | awk '{printf "branch\t\033[35mremote\033[m\t%s\n", $0}'
+        echo "$tags" | awk 'NF {printf "tag\t\033[33m tag  \033[m\t%s\n", $0}'
+        }
+    ) || return
+
+    target=$(echo "$branches" | fzf --no-hscroll --no-multi --ansi --delimiter='\t' --with-nth=2..) || return
+    target_type=$(echo "$target" | awk -F'\t' '{print $1}')
+    target=$(echo "$target" | awk -F'\t' '{print $3}')
+
+    case "$target_type" in
+        tag)
+            git checkout "refs/tags/$target"
+            ;;
+        branch)
+            if git show-ref --verify --quiet "refs/heads/$target"; then
+                git checkout "$target"
+            else
+                remote_branch=$(git branch -r --format="%(refname:short)" | { grep "/${target}$" || true; } | head -1)
+                if [[ -n "$remote_branch" ]]; then
+                    git checkout -b "$target" "$remote_branch"
+                else
+                    git checkout -b "$target"
+                fi
+            fi
+            ;;
+        *)
+            return 1
+            ;;
+    esac
 }
 
